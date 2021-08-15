@@ -1,0 +1,12 @@
+version: "3.5"
+
+services:
+  bot:
+    image: antticodes/torrentbot
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    stop_grace_period: 15s
