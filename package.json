@@ -24,7 +24,7 @@
         "dev": "yarn nodew .",
         "deploy": "yarn nodew src/scripts/deployCommands.js",
         "clear": "yarn nodew src/scripts/clearCommands.js",
-        "build": "docker-compose build",
+        "build": "docker buildx build --platform \"linux/amd64,linux/arm64\" -t antticodes/torrentbot --push .",
         "lint": "yarn eslint src --fix --ext js",
         "format": "yarn prettier --write src",
         "update": "yarn upgrade-interactive --latest",
