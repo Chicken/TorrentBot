@@ -40,4 +40,4 @@ jobs:
           push: true
           tags: |
             antticodes/torrentbot:latest
-            ghcr.io/antticodes/torrentbot:latest
+            ghcr.io/chicken/torrentbot:latest
