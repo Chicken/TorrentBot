@@ -47,7 +47,8 @@ class qBittorrent {
 
     async checkLogin() {
         if (Date.now() > this.exp) {
-            this.defer = await this.login(this.user, this.password);
+            this.defer = this.login(this.user, this.password);
+            await this.defer();
         }
     }
 
