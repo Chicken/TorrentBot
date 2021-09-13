@@ -21,7 +21,7 @@
     ],
     "scripts": {
         "nodew": "node -r dotenv/config --es-module-specifier-resolution=node",
-        "dev": "yarn nodew .",
+        "dev": "yarn nodew --trace-warnings .",
         "deploy": "yarn nodew src/scripts/deployCommands.js",
         "clear": "yarn nodew src/scripts/clearCommands.js",
         "build": "docker buildx build --platform \"linux/amd64,linux/arm64\" -t antticodes/torrentbot --push .",

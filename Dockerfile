@@ -14,4 +14,4 @@ RUN yarn --production=true --frozen-lockfile --link-duplicates
 USER node
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
-CMD [ "node", "--es-module-specifier-resolution=node", "." ]
+CMD [ "node", "--es-module-specifier-resolution=node", "--no-warnings", "." ]
