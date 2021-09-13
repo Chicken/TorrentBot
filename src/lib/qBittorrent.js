@@ -86,6 +86,40 @@ class qBittorrent {
                 throw new Error(`Unexpected response status ${res.status}.`);
         }
     }
+
+    static prettySize(bytes) {
+        const units = [
+            ["B", 0],
+            ["KiB", 0],
+            ["MiB", 1],
+            ["GiB", 2],
+            ["TiB", 3],
+            ["PiB", 3],
+            ["EiB", 3],
+        ];
+
+        let value = bytes;
+        let depth = 0;
+        while (value > 1024 && depth < units.length - 1) {
+            value /= 1024;
+            depth += 1;
+        }
+
+        return `${value.toFixed(units[depth][1])} ${units[depth][0]}`;
+    }
+
+    async getStatistics() {
+        const data = await (await this.fetch("sync/maindata")).json();
+        return {
+            totalUpload: data.server_state.alltime_ul,
+            totalDownload: data.server_state.alltime_dl,
+            status: data.server_state.connection_status,
+            ratio: data.server_state.global_ratio,
+            peers: data.server_state.total_peer_connections,
+            torrentCount: Object.values(data.torrents).length,
+            trackerCount: Object.values(data.trackers).length,
+        };
+    }
 }
 
 export default qBittorrent;
