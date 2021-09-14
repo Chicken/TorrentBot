@@ -46,9 +46,10 @@ class qBittorrent {
     }
 
     async checkLogin() {
+        await this.defer;
         if (Date.now() > this.exp) {
             this.defer = this.login(this.user, this.password);
-            await this.defer();
+            await this.defer;
         }
     }
 
@@ -66,10 +67,8 @@ class qBittorrent {
     }
 
     async addTorrent(url, category) {
-        await this.defer;
         await this.checkLogin();
         if (typeof url !== "string") throw new Error("Url is not a string");
-        await this.defer;
         const data = new FormData();
         data.append("urls", url);
         if (category) data.append("category", category);
@@ -109,6 +108,7 @@ class qBittorrent {
     }
 
     async getStatistics() {
+        await this.checkLogin();
         const data = await (await this.fetch("sync/maindata")).json();
         return {
             totalUpload: data.server_state.alltime_ul,
