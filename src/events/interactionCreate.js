@@ -1,8 +1,17 @@
 import logger from "../lib/logger";
+import config from "../config";
 
 export default async (client, interaction) => {
     if (!interaction.isCommand()) return;
     try {
+        if (!config.users.includes(interaction.user.id)) {
+            await interaction.reply({
+                content: "You don't have the permission to use that!",
+                ephemeral: true,
+            });
+            return;
+        }
+
         const action = client.commands.get(interaction.commandName);
         if (!action) {
             await interaction.reply({
