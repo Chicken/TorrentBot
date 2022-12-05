@@ -1,2 +1,20 @@
-node_modules
-.git
+# dev
+node_modules/
+dist/
+.env
+.husky/_
+.vs/
+.idea/
+
+# node
+package-lock.json
+.node_repl_history
+*.log*
+*.heapsnapshot
+
+# mac users
+.DS_Store
+
+# yarn
+.yarn/install-state.gz
+.yarn/build-state.yml

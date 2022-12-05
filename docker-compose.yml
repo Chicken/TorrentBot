@@ -2,8 +2,8 @@ version: "3.5"
 
 services:
   bot:
-    image: antticodes/torrentbot
+    image: ghcr.io/chicken/torrentbot:latest
     env_file:
       - .env
-    restart: unless-stopped
-    stop_grace_period: 15s
+    restart: always
+    stop_grace_period: 5s
