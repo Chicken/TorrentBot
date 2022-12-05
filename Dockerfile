@@ -1,14 +1,19 @@
 FROM node:18-alpine AS base
 
 ENV CI=true
-ENV HUSKY_SKIP_INSTALL=1
-
-WORKDIR /app
+ENV FORCE_COLOR=true
 
 RUN apk add --no-cache dumb-init
 
-COPY .yarn/ .yarn/
-COPY package.json yarn.lock .yarnrc.yml ./
+WORKDIR /app
+
+RUN chown -R node:node /app
+USER node
+
+COPY --chown=node:node .yarn/ .yarn/
+COPY --chown=node:node package.json yarn.lock .yarnrc.yml ./
+
+RUN sed -i 's/"postinstall": "husky install .husky"/"postinstall": ""/' ./package.json
 
 
 
@@ -18,18 +23,20 @@ ENV NODE_ENV="development"
 
 RUN yarn --immutable
 
-COPY tsconfig.base.json ./
-COPY src/ src/
+COPY --chown=node:node tsconfig.base.json ./
+COPY --chown=node:node src/ src/
 
 RUN yarn build
+
+
 
 FROM base AS runner
 
 ENV NODE_ENV="production"
 
-COPY --from=builder /app/dist/ ./
+RUN yarn workspaces focus --all --production
 
-USER node
+COPY --from=builder --chown=node:node /app/dist/ dist/
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD [ "yarn", "start" ]
