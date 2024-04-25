@@ -6,7 +6,7 @@ import { ctx } from "../ctx.js";
 export const data = new SlashCommandBuilder().setName("stats").setDescription("qBittorrent statistics.").toJSON();
 
 export async function run(command: ChatInputCommandInteraction) {
-    await command.deferReply({ ephemeral: true });
+    await command.deferReply();
     const stats = await ctx.qbit.api.getMainData();
     await command.editReply(
         [
