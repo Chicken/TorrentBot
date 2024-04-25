@@ -23,7 +23,7 @@ ENV NODE_ENV="development"
 
 RUN yarn --immutable
 
-COPY --chown=node:node tsconfig.base.json ./
+COPY --chown=node:node tsconfig.base.json tsconfig.json ./
 COPY --chown=node:node src/ src/
 
 RUN yarn build
