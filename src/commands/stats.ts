@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import type { ChatInputCommandInteraction } from "discord.js";
 import { prettySize } from "qbit.js";
-import { ctx } from "../ctx";
+import { ctx } from "../ctx.js";
 
 export const data = new SlashCommandBuilder().setName("stats").setDescription("qBittorrent statistics.").toJSON();
 

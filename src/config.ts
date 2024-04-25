@@ -1,4 +1,4 @@
-import { logger } from "./lib/logger";
+import { logger } from "./lib/logger.js";
 
 const requiredKeys = ["TOKEN", "USERS", "QBIT_HOST", "QBIT_USER", "QBIT_PASS"] as const;
 const missing = requiredKeys.filter((key) => !process.env[key]);

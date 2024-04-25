@@ -1,4 +1,4 @@
-import { load } from "cheerio";
+import { JSDOM } from "jsdom";
 import fetch from "node-fetch";
 
 export enum Type {
@@ -21,7 +21,6 @@ export enum Filter {
 
 export enum Sort {
     Size = "size",
-    Id = "id",
     Date = "id",
     Seeders = "seeders",
     Leechers = "leechers",
@@ -155,40 +154,36 @@ class Nyaa {
         pages: number;
         totalResults: number;
     } {
-        const $ = load(page);
-        const torrents = $("tr")
-            .slice(1)
-            .toArray()
-            .map<Torrent>((el) => {
-                const s = $(el);
-                const child = (n: number) => s.find(`td:nth-child(${n})`);
-                const nameContainer = child(2);
-                const linkContainer = child(3);
-                const timestamp = parseInt(child(5).attr("data-timestamp")!, 10) * 1000;
-                return {
-                    id: nameContainer.find("a:not(.comments)").attr("href")!.match(/\d+/)![0],
-                    name: nameContainer.find("a:not(.comments)").text().trim(),
-                    hash: linkContainer
-                        .find("a:nth-child(2)")!
-                        .attr("href")!
-                        .match(/urn:btih:([0-9a-z]+)/i)![1],
-                    type: typeClasses[s.attr("class") as keyof typeof typeClasses],
-                    category: child(1).find("a").attr("href")!.split("=")[1] as Category,
-                    magnet: linkContainer.find("a:nth-child(2)").attr("href")!,
-                    torrent: `https://nyaa.si${linkContainer.find("a:nth-child(1)")!.attr("href")!}`,
-                    filesize: child(4).text(),
-                    date: new Date(timestamp),
-                    timestamp,
-                    seeders: parseInt(child(6).text(), 10),
-                    leechers: parseInt(child(7).text(), 10),
-                    downloads: parseInt(child(8).text(), 10),
-                };
-            });
+        const {
+            window: { document },
+        } = new JSDOM(page);
+        const torrents = [...document.querySelectorAll("tr")].slice(1).map<Torrent>((el) => {
+            const child = (n: number) => el.querySelector(`td:nth-child(${n})`) as HTMLElement;
+            const nameContainer = child(2);
+            const linkContainer = child(3);
+            const timestamp = parseInt(child(5).getAttribute("data-timestamp")!, 10) * 1000;
+            return {
+                id: nameContainer.querySelector("a:not(.comments)")!.getAttribute("href")!.match(/\d+/)![0],
+                name: (nameContainer.querySelector("a:not(.comments)") as HTMLAnchorElement).innerHTML.trim(),
+                hash: linkContainer
+                    .querySelector("a:nth-child(2)")!
+                    .getAttribute("href")!
+                    .match(/urn:btih:([0-9a-z]+)/i)![1],
+                type: typeClasses[el.getAttribute("class") as keyof typeof typeClasses],
+                category: child(1).querySelector("a")!.getAttribute("href")!.split("=")[1] as Category,
+                magnet: linkContainer.querySelector("a:nth-child(2)")!.getAttribute("href")!,
+                torrent: `https://nyaa.si${linkContainer.querySelector("a:nth-child(1)")!.getAttribute("href")!}`,
+                filesize: child(4).innerHTML,
+                date: new Date(timestamp),
+                timestamp,
+                seeders: parseInt(child(6).innerHTML, 10),
+                leechers: parseInt(child(7).innerHTML, 10),
+                downloads: parseInt(child(8).innerHTML, 10),
+            };
+        });
 
         const totalResults = parseInt(
-            $("div.pagination-page-info")
-                ?.text()
-                ?.match(/ (\d+) /)?.[1] || "7500",
+            document.querySelector("div.pagination-page-info")?.innerHTML?.match(/ (\d+) /)?.[1] || "7500",
             10
         );
 

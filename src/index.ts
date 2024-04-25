@@ -1,19 +1,22 @@
 import { Client } from "discord.js";
-import { config } from "./config";
-import { ctx } from "./ctx";
-import load from "./lib/loader";
-import { logger } from "./lib/logger";
+import { config } from "./config.js";
+import { ctx } from "./ctx.js";
+import load from "./lib/loader.js";
+import { logger } from "./lib/logger.js";
 
 const client = new Client({
     intents: [],
 });
 
-process.on("SIGINT", () => process.exit(0));
-process.on("SIGTERM", () => process.exit(0));
-process.on("exit", () => {
-    client.destroy();
-    logger.log("Exited...");
-});
+function exit() {
+    void (async function () {
+        await client.destroy().catch(() => null);
+        logger.log("Exited...");
+        process.exit();
+    })();
+}
+process.on("SIGINT", () => exit());
+process.on("SIGTERM", () => exit());
 
 try {
     ctx.client = client;

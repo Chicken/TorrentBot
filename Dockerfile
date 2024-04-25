@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 ENV CI=true
 ENV FORCE_COLOR=true
@@ -13,7 +13,7 @@ USER node
 COPY --chown=node:node .yarn/ .yarn/
 COPY --chown=node:node package.json yarn.lock .yarnrc.yml ./
 
-RUN sed -i 's/"postinstall": "husky install .husky"/"postinstall": ""/' ./package.json
+RUN sed -i 's/postinstall/_postinstall/' ./package.json
 
 
 

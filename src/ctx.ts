@@ -22,9 +22,9 @@ class Context {
         this._client = client;
     }
 
-    get client(): Client {
+    get client(): Client<true> {
         if (!this._client) throw new Error("Client not initialized!");
-        return this._client;
+        return this._client as Client<true>;
     }
 
     set qbit(qbit: QBittorrent) {

@@ -1,7 +1,7 @@
 import type { Interaction } from "discord.js";
-import { config } from "../config";
-import { ctx } from "../ctx";
-import { logger } from "../lib/logger";
+import { config } from "../config.js";
+import { ctx } from "../ctx.js";
+import { logger } from "../lib/logger.js";
 
 export default async (interaction: Interaction) => {
     if (interaction.isChatInputCommand()) {

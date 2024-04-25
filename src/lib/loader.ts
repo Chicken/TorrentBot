@@ -1,8 +1,8 @@
 import { readdir } from "node:fs/promises";
 import { QBittorrent } from "qbit.js";
-import { config } from "../config";
-import { Command, ctx } from "../ctx";
-import { logger } from "./logger";
+import { config } from "../config.js";
+import { Command, ctx } from "../ctx.js";
+import { logger } from "./logger.js";
 
 async function loadEvents(files: string[]) {
     await Promise.all(
@@ -10,7 +10,7 @@ async function loadEvents(files: string[]) {
             const eventName = file.split(".")[0];
             try {
                 logger.debug(`Loading event "${eventName}"`);
-                const { default: event } = (await import(`../events/${eventName}`)) as {
+                const { default: event } = (await import(`../events/${eventName}.js`)) as {
                     default: (...args: any[]) => void;
                 };
                 if (!event) throw new Error("Event doesn't export default.");
@@ -32,7 +32,14 @@ async function loadCommands(files: string[]) {
             const commandName = file.split(".")[0];
             try {
                 logger.debug(`Loading command "${commandName}"`);
-                const command = (await import(`../commands/${commandName}`)) as Command;
+                const command = (await import(`../commands/${commandName}.js`)) as Command;
+
+                // TODO: move this to the builders when support arrives
+                // @ts-expect-error no library support yet
+                command.data.integration_types = [1]; // USER_INSTALL
+                // @ts-expect-error no library support yet
+                command.data.contexts = [0, 1, 2]; // GUILD, BOT_DM, PRIVATE_CHANNEL
+
                 ctx.commands.set(commandName, command);
             } catch (err) {
                 logger.error(

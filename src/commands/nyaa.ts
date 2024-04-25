@@ -5,13 +5,15 @@ import {
     ButtonStyle,
     ChatInputCommandInteraction,
     EmbedBuilder,
-    escapeMarkdown,
+    InteractionCollector,
+    InteractionType,
     StringSelectMenuBuilder,
-    TextChannel,
+    escapeMarkdown,
 } from "discord.js";
-import { ctx } from "../ctx";
-import { logger } from "../lib/logger";
-import Nyaa, { Category, Filter, Order, Sort, Torrent } from "../lib/Nyaa";
+import { ctx } from "../ctx.js";
+import Nyaa, { Category, Filter, Order, Sort, Torrent } from "../lib/Nyaa.js";
+import { logger } from "../lib/logger.js";
+import crypto from "node:crypto";
 
 const perPage = 15;
 
@@ -119,10 +121,21 @@ export async function run(command: ChatInputCommandInteraction) {
     let virtPage = 0;
     const virtMaxPage = Math.ceil(search.totalResults / perPage);
 
+    const exchangeId = crypto.randomBytes(4).toString("hex");
+
     const actionRow = new ActionRowBuilder<ButtonBuilder>();
-    const backBtn = new ButtonBuilder().setCustomId("back").setStyle(ButtonStyle.Primary).setEmoji("⬅️");
-    const forwardBtn = new ButtonBuilder().setCustomId("forward").setStyle(ButtonStyle.Primary).setEmoji("➡️");
-    const downloadBtn = new ButtonBuilder().setCustomId("download").setStyle(ButtonStyle.Success).setEmoji("⬇️");
+    const backBtn = new ButtonBuilder()
+        .setCustomId("back." + exchangeId)
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji("⬅️");
+    const forwardBtn = new ButtonBuilder()
+        .setCustomId("forward." + exchangeId)
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji("➡️");
+    const downloadBtn = new ButtonBuilder()
+        .setCustomId("download." + exchangeId)
+        .setStyle(ButtonStyle.Success)
+        .setEmoji("⬇️");
 
     actionRow.addComponents(backBtn, forwardBtn, downloadBtn);
 
@@ -131,13 +144,11 @@ export async function run(command: ChatInputCommandInteraction) {
         components: [actionRow],
     });
 
-    const channel = await ctx.client.channels.fetch(msg.channel?.id ?? msg.channelId);
-
-    if (!channel || !(channel instanceof TextChannel)) throw new Error("Bad channel");
-
-    const collector = channel.createMessageComponentCollector({
-        filter: (i) => i.message.id === msg.id && i.user.id === command.user.id,
+    const collector = new InteractionCollector(ctx.client, {
+        filter: (i) => i.user.id === command.user.id && i.customId.split(".")[1] === exchangeId,
         time: 10 * 60 * 1000,
+        interactionType: InteractionType.MessageComponent,
+        channel: msg.channelId,
     });
 
     let finished = false;
@@ -157,7 +168,8 @@ export async function run(command: ChatInputCommandInteraction) {
 
     collector.on("collect", async (i) => {
         try {
-            switch (i.customId) {
+            const customId = i.customId.split(".")[0];
+            switch (customId) {
                 case "back":
                     virtPage = virtPage > 0 ? virtPage - 1 : virtMaxPage - 1;
                     break;
@@ -165,9 +177,10 @@ export async function run(command: ChatInputCommandInteraction) {
                     virtPage = virtPage + 1 < virtMaxPage ? virtPage + 1 : 0;
                     break;
                 case "download": {
+                    if (!i.isButton()) throw new Error("The interaction ain't a button");
                     const downloadRow = new ActionRowBuilder<SelectMenuBuilder>();
                     const downloadMenu = new StringSelectMenuBuilder()
-                        .setCustomId("downloadConfirm")
+                        .setCustomId("downloadConfirm." + exchangeId)
                         .setMinValues(1)
                         .setMaxValues(1)
                         .addOptions(
@@ -194,7 +207,7 @@ export async function run(command: ChatInputCommandInteraction) {
                     return;
                 }
                 case "downloadConfirm": {
-                    if (!i.isStringSelectMenu()) throw new Error("The button ain't a button");
+                    if (!i.isStringSelectMenu()) throw new Error("The interaction ain't a select menu");
                     finished = true;
                     collector.stop();
                     if (i.values[0] === "cancel") {
@@ -247,6 +260,8 @@ export async function run(command: ChatInputCommandInteraction) {
             await i.deferUpdate();
         } catch (err) {
             try {
+                if (i.isModalSubmit()) throw new Error("Yeah we don't have modals here");
+
                 await i[i.replied || i.deferred ? "editReply" : "reply"]({
                     content: "Something went wrong...",
                     ephemeral: true,
