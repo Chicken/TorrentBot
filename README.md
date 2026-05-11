@@ -21,6 +21,5 @@ Discord bot to search and download torrents.
 | TOKEN            | Discord bot token                                                 |
 | USERS            | Array of Discord ids allowed to use the bot                       |
 | QBIT_HOST        | Url of qBittorent web interface                                   |
-| QBIT_USER        | qBittorent username                                               |
-| QBIT_PASS        | qBittorrent password                                              |
+| QBIT_APIKEY      | qBittorent apikey                                                 |
 | QBIT_IGNORE_CERT | `true`/`false`, set to true if using self signed ssl certificates |

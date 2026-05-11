@@ -1,6 +1,6 @@
 import { logger } from "./lib/logger.js";
 
-const requiredKeys = ["TOKEN", "USERS", "QBIT_HOST", "QBIT_USER", "QBIT_PASS"] as const;
+const requiredKeys = ["TOKEN", "USERS", "QBIT_HOST", "QBIT_APIKEY"] as const;
 const missing = requiredKeys.filter((key) => !process.env[key]);
 if (missing.length) {
     logger.error(`Missing required environment variables: ${missing.join(", ")}`);
@@ -22,8 +22,7 @@ export const config = {
     users: process.env.USERS?.split(",") ?? [],
     qbit: {
         host: process.env.QBIT_HOST ?? "",
-        user: process.env.QBIT_USER ?? "",
-        pass: process.env.QBIT_PASS ?? "",
+        apikey: process.env.QBIT_APIKEY ?? "",
         insecure: process.env.QBIT_IGNORE_CERT === "true",
     },
 };

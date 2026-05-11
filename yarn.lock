@@ -875,6 +875,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vladfrangu/async_event_emitter@npm:^2.4.7":
+  version: 2.4.7
+  resolution: "@vladfrangu/async_event_emitter@npm:2.4.7"
+  checksum: 10/90cfabbe1f2bbfe8d81f99a884c1d0ef16454f0c2457a2cb497cda35a17888b3971ff1dba68252f60013c942220b20962483de0ca62fe9152e2d55cace3155e3
+  languageName: node
+  linkType: hard
+
 "JSONStream@npm:^1.3.5":
   version: 1.3.5
   resolution: "JSONStream@npm:1.3.5"
@@ -3302,12 +3309,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qbit.js@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "qbit.js@npm:2.1.4"
+"qbit.js@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "qbit.js@npm:2.2.0"
   dependencies:
-    node-fetch: "npm:^3.3.2"
-  checksum: 10/d5eecd4bd8bd1840bc3ca2756ee4de2fee924c463c9897c3f612f1a591cb72ecb3c766529b07dea8802c04486eadc9ced46cb8aa17940c90a20ecda89d94f9fe
+    "@vladfrangu/async_event_emitter": "npm:^2.4.7"
+    undici: "npm:^8.2.0"
+  checksum: 10/92a0663c847b5bdcc7eaa9883d4a466474444c1107617e129a83b163038de70773d618bc5ba35eedfe67c4b956b085e7769b6e81ec7d2f3d09893f0374bdd414
   languageName: node
   linkType: hard
 
@@ -3766,7 +3774,7 @@ __metadata:
     node-fetch: "npm:^3.3.2"
     prettier: "npm:^3.2.5"
     pretty-quick: "npm:^4.0.0"
-    qbit.js: "npm:^2.1.4"
+    qbit.js: "npm:^2.2.0"
     resolve: "npm:^1.22.8"
     tslib: "npm:^2.6.2"
     tsx: "npm:^4.7.3"
@@ -3883,6 +3891,13 @@ __metadata:
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
   checksum: 10/2bf96b102fb84568fb235bdf6e1e352e5d2bf99566b243cd1b13b41578bf9dd5c7c3d3d82192b20a3fec61fe7a528f9d80cd5b4555ce65405c06c69b023013de
+  languageName: node
+  linkType: hard
+
+"undici@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "undici@npm:8.2.0"
+  checksum: 10/5525ab7addea2a5db313572d2ab894eac427a96e98b3f45f6860919a2a2ae27ff2f960e75422dced214c7a651d31a0b253de9144d3ce79c18d66961325092575
   languageName: node
   linkType: hard
 

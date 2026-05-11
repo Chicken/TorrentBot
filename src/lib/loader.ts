@@ -65,9 +65,13 @@ const load = async () => {
 
     logger.log("Loading qBittorrent...");
 
-    ctx.qbit = new QBittorrent(config.qbit.host, config.qbit.insecure);
+    ctx.qbit = new QBittorrent({
+        host: config.qbit.host,
+        apiKey: config.qbit.apikey,
+        insecure: config.qbit.insecure,
+    });
     try {
-        await ctx.qbit.login(config.qbit.user, config.qbit.pass);
+        await ctx.qbit.start();
     } catch (err) {
         logger.error(`Failed to load qBittorrent\n${err instanceof Error ? err.stack ?? err.message : String(err)}`);
         process.exit();
