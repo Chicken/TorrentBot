@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 ENV CI=true
 ENV FORCE_COLOR=true
